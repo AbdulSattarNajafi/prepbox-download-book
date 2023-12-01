@@ -39,50 +39,44 @@ const DownloadBookModal = () => {
     async function submitHandler(e) {
         e.preventDefault();
 
-        const webhookUrl =
-            'https://hooks.slack.com/services/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';
-
         if (!formIsValid) {
             typeBlurHandler();
             emailBlurHandler();
             return;
         }
 
-        // ========= API Request
+        const webhookUrl =
+            'https://hooks.slack.com/services/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';
+
         const data = {
             text: `Workbook Downloaded! \nDownloaded book: ${book.name}\nType: ${selectedType} \nEmail: ${enteredEmail}`,
         };
-        console.log(data);
 
-        let res = await axios.all([
-            // Slack API call
-            axios.post(webhookUrl, JSON.stringify(data), {
-                withCredentials: false,
-                transformRequest: [
-                    (data) => {
-                        return data;
-                    },
-                ],
-            }),
-            // back-end call
-            axios.post(
-                `https://app.prepanywhere.com/api/stu/static_book_downloads/new_download?book_id=${book.id}&email=${enteredEmail}&user_type=${selectedType}`
-            ),
-        ]);
-        console.log(res);
-        if (res[0].status === 200 && res[1].status === 200) {
-            hideModalHandler();
-        } else {
+        try {
+            const response = await axios.all([
+                // Slack API call
+                axios.post(webhookUrl, JSON.stringify(data), {
+                    withCredentials: false,
+                    transformRequest: [
+                        (data) => {
+                            return data;
+                        },
+                    ],
+                }),
+                // back-end call
+                axios.post(
+                    `https://app.prepanywhere.com/api/stu/static_book_downloads/new_download?book_id=${book.id}&email=${enteredEmail}&user_type=${selectedType}`
+                ),
+            ]);
+
+            if (response[0].status === 200 && response[1].status === 200) {
+                downloadBookHandler();
+                hideModalHandler();
+            }
+        } catch (error) {
+            console.log(error.message);
             alert('There was an error.  Please try again later.');
         }
-
-        // console.log(`I am a ${selectedType}, and my Email is ${enteredEmail}`);
-
-        // A- Close Modal
-        hideModalHandler();
-
-        // B- Download the Book
-        downloadBookHandler();
     }
 
     return createPortal(

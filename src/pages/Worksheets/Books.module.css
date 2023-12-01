@@ -21,17 +21,17 @@
     color: black;
 }
 
-.formWrapper {
-    padding-top: 30px;
-    width: 1000px;
-    max-width: 1000px;
-}
-
 .container {
     max-width: 1022px;
     width: 100%;
     margin: 0 auto;
     padding: 0 20px;
+}
+
+.formWrapper {
+    max-width: 1000px;
+    width: 100%;
+    padding-top: 30px;
 }
 
 .container h1 {
